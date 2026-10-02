@@ -1,36 +1,72 @@
-clc; clear all; %10/12
-x=linspace(0,12,100);
-a1=trimf(x,[1 3 5]);
-a2=trimf(x,[2 6 9]);
-a3=trimf(x,[3 5 10]);
-% plot(x,a1,'k'); hold on; plot(x,a2,'k'); hold on; plot(x,a3,'k')
-% legend('a1','a2','a3')
-K=[a1;a2;a3];
-plot(x,K,'b','LineWidth',2)
-%πως θα βρω πσο ανήκει ένα χ* σε κάθε σύνολο;
-%Θα βάλω όπου χ το χ*
-% ind=find(x==4.5)
-%-------------------------------
-%Αποασαφοποίηση
-%Ας υποθέσουμε ότι τα παραπάνω σύνολα είναι στην έξοδο
-x=linspace(0,12,100);
-b1=trimf(x,[1 3 5]);
-b2=trimf(x,[2 6 9]);
-b3=trimf(x,[3 5 10]);
-%Συμμετοχές ενός χ* σε Α1,Α2,Α3.
-%Δηλαδή, w1=μΑ1(χ*)
-w1=0.7; w2=0.3; w3=0.8;
-%Κανόνες
-%Αν x είναι Α1 τότε y είναι Β2
-%Αν x είναι Α2 τότε y είναι Β3
-%Αν x είναι Α3 τότε y είναι Β1
+clc; clear; close all;
+
+% =========================================================
+% Part 1: Define Fuzzy Sets (Input/Output Universe)
+% =========================================================
+x = linspace(0, 12, 100); % Universe of discourse
+
+% Define Triangular Membership Functions
+a1 = trimf(x, [1, 3, 5]);
+a2 = trimf(x, [2, 6, 9]);
+a3 = trimf(x, [3, 5, 10]);
+
+% Group into a matrix and plot the initial fuzzy sets
+K = [a1; a2; a3];
+figure;
+plot(x, K, 'b', 'LineWidth', 2);
+title('Input Fuzzy Sets (A1, A2, A3)');
+xlabel('Universe of Discourse');
+ylabel('Membership Degree');
+legend('A1', 'A2', 'A3');
+grid on;
+
+% Note: To find the membership degree of a specific crisp input x*, 
+% we evaluate the membership function at that exact point.
+% e.g., ind = find(x == 4.5);
+
+% =========================================================
+% Part 2: Mamdani Inference & Defuzzification
+% =========================================================
+% Assume b1, b2, b3 are the fuzzy sets for the output variable y
+b1 = trimf(x, [1, 3, 5]);
+b2 = trimf(x, [2, 6, 9]);
+b3 = trimf(x, [3, 5, 10]);
+
+% Assume firing strengths (degrees of fulfillment) for a specific crisp input x*
+% i.e., w_i = mu_Ai(x*)
+w1 = 0.7; 
+w2 = 0.3; 
+w3 = 0.8;
+
+% Rule Base:
+% Rule 1: IF x is A1 THEN y is B2
+% Rule 2: IF x is A2 THEN y is B3
+% Rule 3: IF x is A3 THEN y is B1
+
+figure;
 hold on;
-plot(x,min(w1,b2),'r','LineWidth',3); hold on;
-plot(x,min(w2,b3),'m','LineWidth',3); hold on;
-plot(x,min(w3,b1),'k','LineWidth',3); hold on;
-b1dash=min(w3,b1);
-b2dash=min(w1,b2);
-b3dash=min(w2,b3);
-c=max(b1dash,max(b2dash,b3dash))
-plot(x,c,'y','LineWidth',5) %το χ είναι έξοδος
-y=defuzz(x,c,'centroid')
+
+% Implication step: Truncate output sets using the MIN operator (Mamdani implication)
+b2_dash = min(w1, b2); % From Rule 1
+b3_dash = min(w2, b3); % From Rule 2
+b1_dash = min(w3, b1); % From Rule 3
+
+% Plot individual truncated sets
+plot(x, b2_dash, 'r', 'LineWidth', 2);
+plot(x, b3_dash, 'm', 'LineWidth', 2);
+plot(x, b1_dash, 'k', 'LineWidth', 2);
+
+% Aggregation step: Combine all truncated sets using the MAX operator
+C_aggregated = max(b1_dash, max(b2_dash, b3_dash));
+
+% Plot the final aggregated fuzzy set
+plot(x, C_aggregated, 'y', 'LineWidth', 5);
+title('Rule Implication & Aggregation');
+xlabel('Output Universe (y)');
+ylabel('Membership Degree');
+legend('Truncated B2 (Rule 1)', 'Truncated B3 (Rule 2)', 'Truncated B1 (Rule 3)', 'Aggregated Output (C)');
+grid on;
+
+% Defuzzification step: Extract a crisp output value using the Centroid method
+y_crisp = defuzz(x, C_aggregated, 'centroid');
+fprintf('Defuzzified crisp output value (Centroid method): %.4f\n', y_crisp);

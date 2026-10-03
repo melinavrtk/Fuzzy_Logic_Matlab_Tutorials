@@ -28,5 +28,10 @@ This repository contains a collection of MATLAB scripts developed for educationa
 
 ![Image Fuzzification & Contrast](plot_image.png)
 
+## Acknowledgments & Context
+The foundational concepts, algorithms, and initial MATLAB scripts for these projects were developed as part of my undergraduate coursework at the **University of West Attica (Biomedical Engineering)**. 
+
+The current repository represents a curated, cleaned, and well-documented collection of those assignments. The code has been organized to serve as a clear, accessible reference and tutorial for computational intelligence and fuzzy logic applications using MATLAB.
+
 ---
-*Created by a final-year Biomedical Engineering student (University of West Attica), specializing in Artificial Intelligence, Deep Learning, and Medical Image Analysis.*
+*Curated and documented by a final-year Biomedical Engineering student (University of West Attica), specializing in AI and Medical Data Science.*
